@@ -1,8 +1,6 @@
-FROM bitnami/kubectl:1.29
+FROM bitnami/kubectl:latest
 
-COPY deploy.sh /deploy.sh
+COPY --chmod=755 deployer/deploy.sh /deploy.sh
 COPY deploy /deploy
-
-RUN chmod +x /deploy.sh
 
 ENTRYPOINT ["/deploy.sh"]
