@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ktaiflow-ui
+  namespace: ${NAMESPACE}
+spec:
+  type: ClusterIP
+  selector:
+    app: ktaiflow-ui
+  ports:
+    - port: 80
+      targetPort: ${KTAIFLOW_UI_PORT}

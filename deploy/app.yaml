@@ -1,0 +1,28 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: elexratio
+  namespace: ${NAMESPACE}
+spec:
+  descriptor:
+    type: "ElexRatio"
+    version: "1.0.0"
+    description: "ElexRatio is a multi-service platform for DAG orchestration, compliance, and workflow management deployed on Google Kubernetes Engine."
+    keywords:
+      - dags
+      - compliance
+      - workflow
+      - gke
+    maintainers:
+      - name: BriefCMS
+        email: support@elexratio.com
+    links:
+      - description: Documentation
+        url: https://github.com/BriefCMS/ElexRatio-On-GCP
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
+    - group: networking.k8s.io
+      kind: Ingress

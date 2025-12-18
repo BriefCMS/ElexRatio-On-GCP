@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kat-dynamic-portal
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kat-dynamic-portal
+  template:
+    metadata:
+      labels:
+        app: kat-dynamic-portal
+    spec:
+      containers:
+        - name: kat-dynamic-portal
+          image: ${KAT_DYNAMIC_PORTAL_IMAGE}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${KAT_DYNAMIC_PORTAL_PORT}
+          env:
+            - name: NODE_ENV
+              value: ${NODE_ENV}

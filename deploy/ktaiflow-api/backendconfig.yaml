@@ -1,0 +1,17 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: ${KTAIFLOW_API_BACKEND_CONFIG}
+  namespace: ${NAMESPACE}
+spec:
+  timeoutSec: 300
+  connectionDraining:
+    drainingTimeoutSec: 300
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 10
+    healthyThreshold: 1
+    unhealthyThreshold: 3
+    type: HTTP
+    port: ${KTAIFLOW_API_PORT}
+    requestPath: /health

@@ -1,0 +1,22 @@
+properties:
+  NAMESPACE:
+    type: string
+    title: Kubernetes Namespace
+    description: Namespace where all ElexRatio resources will be deployed.
+    default: elexratio
+    examples:
+      - elexratio
+
+  DOMAIN:
+    type: string
+    title: Base Domain
+    description: >
+      Base domain used for ingress hosts.
+      Example: example.com
+    examples:
+      - example.com
+    pattern: "^[a-zA-Z0-9.-]+$"
+
+required:
+  - NAMESPACE
+  - DOMAIN

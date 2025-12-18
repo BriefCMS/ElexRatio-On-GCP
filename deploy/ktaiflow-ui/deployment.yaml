@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ktaiflow-ui
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ktaiflow-ui
+  template:
+    metadata:
+      labels:
+        app: ktaiflow-ui
+    spec:
+      containers:
+        - name: ktaiflow-ui
+          image: ${KTAIFLOW_UI_IMAGE}
+          ports:
+            - containerPort: ${KTAIFLOW_UI_PORT}
+          env:
+            - name: NODE_ENV
+              value: ${NODE_ENV}

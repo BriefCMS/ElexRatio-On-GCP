@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ktaiflow-api
+  namespace: ${NAMESPACE}
+  annotations:
+    cloud.google.com/backend-config: >
+      {"default": "${KTAIFLOW_API_BACKEND_CONFIG}"}
+spec:
+  type: ClusterIP
+  selector:
+    app: ktaiflow-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: ${KTAIFLOW_API_PORT}
+      protocol: TCP

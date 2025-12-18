@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kat-admin-studio
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kat-admin-studio
+  template:
+    metadata:
+      labels:
+        app: kat-admin-studio
+    spec:
+      containers:
+        - name: kat-admin-studio
+          image: ${KAT_ADMIN_STUDIO_IMAGE}
+          ports:
+            - containerPort: ${KAT_ADMIN_STUDIO_PORT}
+          env:
+            - name: NODE_ENV
+              value: ${NODE_ENV}

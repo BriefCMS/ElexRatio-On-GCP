@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kat-api
+  namespace: ${NAMESPACE}
+  annotations:
+    cloud.google.com/backend-config: >
+      {"default": "${KAT_API_BACKEND_CONFIG}"}
+spec:
+  type: ClusterIP
+  selector:
+    app: kat-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: ${KAT_API_PORT}
+      protocol: TCP

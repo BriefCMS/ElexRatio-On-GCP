@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kat-admin-studio-ingress
+  namespace: ${NAMESPACE}
+  annotations:
+    networking.gke.io/managed-certificates: ${KAT_ADMIN_STUDIO_CERT_NAME}
+    ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: gce
+  rules:
+    - host: admin.${DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kat-admin-studio
+                port:
+                  number: 80

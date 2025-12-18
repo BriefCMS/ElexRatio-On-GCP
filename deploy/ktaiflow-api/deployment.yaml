@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ktaiflow-api
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ktaiflow-api
+  template:
+    metadata:
+      labels:
+        app: ktaiflow-api
+    spec:
+      serviceAccountName: ${SERVICE_ACCOUNT}
+      containers:
+        - name: ktaiflow-api
+          image: ${KTAIFLOW_API_IMAGE}
+          ports:
+            - containerPort: ${KTAIFLOW_API_PORT}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "GcpDevelopment"
+            - name: CLOUD_PLATFORM
+              value: "Gcp"
+            - name: GCP_PROJECT_ID
+              value: ${GCP_PROJECT_ID}
+            - name: SQL_BASE
+              value: "GKE"
+            - name: ASPNETCORE_URLS
+              value: "http://*:${KTAIFLOW_API_PORT}"
+
+          readinessProbe:
+            tcpSocket:
+             port: ${KTAIFLOW_API_PORT}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+             port: ${KTAIFLOW_API_PORT}
+            initialDelaySeconds: 60
+            periodSeconds: 30
