@@ -1,6 +1,6 @@
 # ElexRatio on Google Cloud Marketplace
 
-ElexRatio is a multi-service risk, compliance, and workflow management platform designed to run on **Google Kubernetes Engine (GKE)**.
+ElexRatio is a multi-service dags orchestration, compliance, and workflow management platform designed to run on **Google Kubernetes Engine (GKE)**.
 
 ## Components
 
