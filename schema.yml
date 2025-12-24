@@ -1,3 +1,10 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  deployer:
+    type: manifest
+    image: us-docker.pkg.dev/able-decorator-477323-u6/briefusregistry/deployer:2.0
+
 properties:
   NAMESPACE:
     type: string
