@@ -1,44 +1,63 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-source /deploy/params.env
+# Load Marketplace-injected values + image mappings
+source /data/params.env
 
-echo "Creating namespace..."
-kubectl apply -f <(envsubst < /deploy/namespace.yaml)
+echo "===================================================="
+echo " ElexRatio – Google Marketplace manifest dataer"
+echo " Namespace : ${NAMESPACE}"
+echo " ServiceAccount : ${SERVICE_ACCOUNT}"
+echo " Domain : ${DOMAIN}"
+echo "===================================================="
 
-echo "Deploying kat-api..."
-kubectl apply -f <(envsubst < /deploy/kat-api/backendconfig.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-api/service.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-api/managed-cert.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-api/ingress.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-api/deployment.yaml)
 
-echo "Deploying ktaiflow-api..."
-kubectl apply -f <(envsubst < /deploy/ktaiflow-api/backendconfig.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-api/service.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-api/managed-cert.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-api/ingress.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-api/deployment.yaml)
+echo "Creating namespace (idempotent)..."
+kubectl apply -f <(envsubst < /data/namespace.yaml)
 
-echo "Deploying kat-admin-studio..."
-kubectl apply -f <(envsubst < /deploy/kat-admin-studio/service.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-admin-studio/managed-cert.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-admin-studio/ingress.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-admin-studio/deployment.yaml)
+echo "Waiting for namespace to become active..."
+kubectl wait --for=condition=Established --timeout=30s namespace "${NAMESPACE}" || true
 
-echo "Deploying kat-dynamic-portal..."
-kubectl apply -f <(envsubst < /deploy/kat-dynamic-portal/service.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-dynamic-portal/managed-cert.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-dynamic-portal/ingress.yaml)
-kubectl apply -f <(envsubst < /deploy/kat-dynamic-portal/deployment.yaml)
+echo "dataing kat-api..."
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/backendconfig.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/service.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/managed-cert.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/ingress.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/datament.yaml)
 
-echo "Deploying ktaiflow-ui..."
-kubectl apply -f <(envsubst < /deploy/ktaiflow-ui/service.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-ui/managed-cert.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-ui/ingress.yaml)
-kubectl apply -f <(envsubst < /deploy/ktaiflow-ui/deployment.yaml)
+
+echo "dataing ktaiflow-api..."
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/backendconfig.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/service.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/managed-cert.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/ingress.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/datament.yaml)
+
+
+echo "dataing kat-admin-studio..."
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/service.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/managed-cert.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/ingress.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/datament.yaml)
+
+
+echo "dataing kat-dynamic-portal..."
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/service.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/managed-cert.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/ingress.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/datament.yaml)
+
+
+echo "dataing ktaiflow-ui..."
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/service.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/managed-cert.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/ingress.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/datament.yaml)
+
 
 echo "Creating Application CR..."
-kubectl apply -f <(envsubst < /deploy/app.yaml)
+kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/app.yaml)
 
-echo "Deployment completed successfully."
+echo "===================================================="
+echo " datament completed successfully."
+echo "===================================================="

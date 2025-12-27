@@ -1,0 +1,113 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+
+  publishedVersion: "2.0"
+  publishedVersionMetadata:
+    releaseNote: >-
+      Initial release of ElexRatio on GKE via manifest deployer.
+    recommended: true
+
+  managedUpdates:
+    kalmSupported: false
+
+  images:
+    '':   # Primary deployer image
+      properties:
+        imageRepo:
+          type: REPO_WITH_REGISTRY
+        imageTag:
+          type: TAG
+
+    katApi:
+      properties:
+        katApiRepo:
+          type: REPO_WITH_REGISTRY
+        katApiTag:
+          type: TAG
+
+    ktaiflowApi:
+      properties:
+        ktaiflowApiRepo:
+          type: REPO_WITH_REGISTRY
+        ktaiflowApiTag:
+          type: TAG
+
+    katDynamicPortal:
+      properties:
+        katDynamicPortalRepo:
+          type: REPO_WITH_REGISTRY
+        katDynamicPortalTag:
+          type: TAG
+
+    katAdminStudio:
+      properties:
+        katAdminStudioRepo:
+          type: REPO_WITH_REGISTRY
+        katAdminStudioTag:
+          type: TAG
+
+    ktaiflowUi:
+      properties:
+        ktaiflowUiRepo:
+          type: REPO_WITH_REGISTRY
+        ktaiflowUiTag:
+          type: TAG
+
+  clusterConstraints:
+    resources:
+      - requests:
+          cpu: 1000m
+          memory: 3750Mi
+        affinity:
+          simpleNodeAffinity:
+            type: REQUIRE_MINIMUM_NODE_COUNT
+            minimumNodeCount: 3
+
+
+properties:
+
+  APP_INSTANCE_NAME:
+    type: string
+    default: "elexratio"
+    pattern: "^[a-z0-9-]+$"
+    x-google-marketplace:
+      type: NAME
+
+  NAMESPACE:
+    type: string
+    default: "kat"
+    x-google-marketplace:
+      type: NAMESPACE
+
+  DOMAIN:
+    type: string
+    pattern: "^[a-zA-Z0-9.-]+$"
+
+  deployerServiceAccount:
+    type: string
+    title: Service Account for deployer
+    default: "deployer-sa"
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources: ["pods","services","serviceaccounts","configmaps"]
+                verbs: ["get","list","create","watch"]
+              - apiGroups: ["apps"]
+                resources: ["deployments","statefulsets","replicasets"]
+                verbs: ["get","list","create","update","patch"]
+              - apiGroups: ["rbac.authorization.k8s.io"]
+                resources: ["roles","rolebindings","clusterroles","clusterrolebindings"]
+                verbs: ["create","get","list"]
+
+
+required:
+  - APP_INSTANCE_NAME
+  - NAMESPACE
+  - DOMAIN
+  - deployerServiceAccount
