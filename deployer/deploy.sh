@@ -11,6 +11,7 @@ echo " ServiceAccount : ${SERVICE_ACCOUNT}"
 echo " Domain : ${DOMAIN}"
 echo "===================================================="
 
+echo "Deployer image: ${DEPLOYER_IMAGE}"
 
 echo "Creating namespace (idempotent)..."
 kubectl apply -f <(envsubst < /data/namespace.yaml)

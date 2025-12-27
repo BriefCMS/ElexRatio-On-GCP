@@ -12,42 +12,43 @@ x-google-marketplace:
     kalmSupported: false
 
   images:
-    '':   # Primary deployer image
+  
+    deployer:
       properties:
-        imageRepo:
+        deployerImageRepo:
           type: REPO_WITH_REGISTRY
-        imageTag:
+        deployerImageTag:
           type: TAG
 
-    katApi:
+    kat-api:
       properties:
         katApiRepo:
           type: REPO_WITH_REGISTRY
         katApiTag:
           type: TAG
 
-    ktaiflowApi:
+    ktaiflow-api:
       properties:
         ktaiflowApiRepo:
           type: REPO_WITH_REGISTRY
         ktaiflowApiTag:
           type: TAG
 
-    katDynamicPortal:
+    kat-dynamic-portal:
       properties:
         katDynamicPortalRepo:
           type: REPO_WITH_REGISTRY
         katDynamicPortalTag:
           type: TAG
 
-    katAdminStudio:
+    kat-admin-studio:
       properties:
         katAdminStudioRepo:
           type: REPO_WITH_REGISTRY
         katAdminStudioTag:
           type: TAG
 
-    ktaiflowUi:
+    ktaiflow-ui:
       properties:
         ktaiflowUiRepo:
           type: REPO_WITH_REGISTRY
@@ -64,9 +65,7 @@ x-google-marketplace:
             type: REQUIRE_MINIMUM_NODE_COUNT
             minimumNodeCount: 3
 
-
 properties:
-
   APP_INSTANCE_NAME:
     type: string
     default: "elexratio"
@@ -104,7 +103,6 @@ properties:
               - apiGroups: ["rbac.authorization.k8s.io"]
                 resources: ["roles","rolebindings","clusterroles","clusterrolebindings"]
                 verbs: ["create","get","list"]
-
 
 required:
   - APP_INSTANCE_NAME
