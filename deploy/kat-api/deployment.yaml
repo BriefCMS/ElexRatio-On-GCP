@@ -3,15 +3,22 @@ kind: Deployment
 metadata:
   name: kat-api
   namespace: ${NAMESPACE}
+  labels:
+    app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+    app.kubernetes.io/component: kat-api
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: kat-api
+      # Added this line:
+      app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
   template:
     metadata:
       labels:
         app: kat-api
+        app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+        app.kubernetes.io/component: kat-api
     spec:
       serviceAccountName: ${SERVICE_ACCOUNT}
       containers:
@@ -25,7 +32,7 @@ spec:
             - name: CLOUD_PLATFORM
               value: "GCP"
             - name: GCP_PROJECT_ID
-              value: ${GCP_PROJECT_ID}
+              value: "${GCP_PROJECT_ID}"
             - name: SQL_BASE
               value: "GKE"
             - name: CONTAINER_BASE
@@ -36,25 +43,22 @@ spec:
               value: "GKE"
             - name: ASPNETCORE_URLS
               value: "http://*:${KAT_API_PORT}"
-
           readinessProbe:
             httpGet:
               path: /health
               port: ${KAT_API_PORT}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 15 # Increased slightly for .NET startup
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           livenessProbe:
             httpGet:
               path: /health
               port: ${KAT_API_PORT}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 45 # Increased to give app room to breathe
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-
           resources:
             requests:
               cpu: "100m"

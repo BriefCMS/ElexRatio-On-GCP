@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: ktaiflow-api
   namespace: ${NAMESPACE}
+  labels:
+    app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+    app.kubernetes.io/component: ktaiflow-api
   annotations:
     cloud.google.com/backend-config: >
       {"default": "${KTAIFLOW_API_BACKEND_CONFIG}"}

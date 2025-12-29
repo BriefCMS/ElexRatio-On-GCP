@@ -3,15 +3,21 @@ kind: Deployment
 metadata:
   name: kat-dynamic-portal
   namespace: ${NAMESPACE}
+  labels:
+    app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+    app.kubernetes.io/component: kat-dynamic-portal
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: kat-dynamic-portal
+      app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
   template:
     metadata:
       labels:
         app: kat-dynamic-portal
+        app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+        app.kubernetes.io/component: kat-dynamic-portal
     spec:
       containers:
         - name: kat-dynamic-portal

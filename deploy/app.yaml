@@ -26,6 +26,10 @@ spec:
       - description: Documentation
         url: https://github.com/BriefCMS/ElexRatio-On-GCP
 
+  x-google-marketplace:
+    clusterConstraints:
+      k8sVersion: ">=1.28.0, <=1.34.99"
+
   componentKinds:
     - group: apps
       kind: Deployment
@@ -33,3 +37,7 @@ spec:
       kind: Service
     - group: networking.k8s.io
       kind: Ingress
+    - group: cloud.google.com
+      kind: BackendConfig
+    - group: networking.gke.io
+      kind: ManagedCertificate

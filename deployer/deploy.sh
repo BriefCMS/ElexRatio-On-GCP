@@ -1,64 +1,106 @@
 #!/bin/bash
 set -euo pipefail
 
-# Load Marketplace-injected values + image mappings
-source /data/params.env
-
 echo "===================================================="
-echo " ElexRatio – Google Marketplace manifest dataer"
-echo " Namespace : ${NAMESPACE}"
-echo " ServiceAccount : ${SERVICE_ACCOUNT}"
-echo " Domain : ${DOMAIN}"
+echo " ElexRatio – Google Marketplace Deployer"
 echo "===================================================="
 
-echo "Deployer image: ${DEPLOYER_IMAGE}"
+#
+# 1) Convert values.yaml → params.env using Marketplace tool
+#
 
-echo "Creating namespace (idempotent)..."
-kubectl apply -f <(envsubst < /data/namespace.yaml)
+if [[ -f /data/values.yaml ]]; then
+  echo "Generating params.env from values.yaml..."
+  /bin/print_config.py \
+    --values_file /data/values.yaml \
+    --schema_file /data/schema.yaml \
+    --output_dir /data
+fi
 
-echo "Waiting for namespace to become active..."
-kubectl wait --for=condition=Established --timeout=30s namespace "${NAMESPACE}" || true
+#
+# 2) Load params from either source
+#
+if [[ -f /data/params.env ]]; then
+  echo "Loading params from /data/params.env"
+  source /data/params.env
 
-echo "dataing kat-api..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/backendconfig.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/service.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/managed-cert.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/ingress.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-api/datament.yaml)
+elif [[ -f /var/run/konlet/params ]]; then
+  echo "Loading params from /var/run/konlet/params"
+  source /var/run/konlet/params
 
+else
+  echo "❌ ERROR: No parameter file found"
+  ls -R /data || true
+  exit 1
+fi
 
-echo "dataing ktaiflow-api..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/backendconfig.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/service.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/managed-cert.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/ingress.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-api/datament.yaml)
+echo " Instance : ${APP_INSTANCE_NAME}"
+echo " Namespace: ${NAMESPACE}"
+echo " Domain   : ${DOMAIN}"
+echo "===================================================="
 
+# enable debug tracing after params load
+set -x
 
-echo "dataing kat-admin-studio..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/service.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/managed-cert.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/ingress.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-admin-studio/datament.yaml)
+#
+# 3) Create namespace safely
+#
+if [[ -f /data/namespace.yaml ]]; then
+  kubectl apply -f <(envsubst < /data/namespace.yaml)
+else
+  kubectl create namespace "${NAMESPACE}" || true
+fi
 
+#
+# 4) Deploy components
+#
+deploy_component() {
+  local name="$1"
+  local path="/data/$name"
 
-echo "dataing kat-dynamic-portal..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/service.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/managed-cert.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/ingress.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/kat-dynamic-portal/datament.yaml)
+  echo "---- Deploying component: $name ----"
 
+  [[ -d "$path" ]] || return
 
-echo "dataing ktaiflow-ui..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/service.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/managed-cert.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/ingress.yaml)
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/ktaiflow-ui/datament.yaml)
+  shopt -s nullglob
+  for file in "$path"/*.yaml; do
+    envsubst < "$file" | kubectl apply -n "${NAMESPACE}" -f -
+  done
+  shopt -u nullglob
+}
 
+deploy_component "kat-api"
+deploy_component "ktaiflow-api"
+deploy_component "kat-admin-studio"
+deploy_component "kat-dynamic-portal"
+deploy_component "ktaiflow-ui"
 
-echo "Creating Application CR..."
-kubectl apply -n "${NAMESPACE}" -f <(envsubst < /data/app.yaml)
+#
+# 5) Application CR (optional)
+#
+if [[ -f /data/app.yaml ]]; then
+  envsubst < /data/app.yaml | kubectl apply -n "${NAMESPACE}" -f -
+fi
+
+#
+# 6) Wait for deployments — but don't fail job
+#
+DEPLOYMENTS=(
+  "kat-api"
+  "ktaiflow-api"
+  "kat-admin-studio"
+  "kat-dynamic-portal"
+  "ktaiflow-ui"
+)
+
+for dep in "${DEPLOYMENTS[@]}"; do
+  kubectl wait --for=condition=available --timeout=300s \
+    deployment/"$dep" -n "${NAMESPACE}" || true
+done
 
 echo "===================================================="
-echo " datament completed successfully."
+echo " Deployment completed"
 echo "===================================================="
+
+# keep pod alive for debugging (remove later)
+sleep 300

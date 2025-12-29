@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: kat-dynamic-portal
   namespace: ${NAMESPACE}
+  labels:
+    app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+    app.kubernetes.io/component: kat-dynamic-portal
 spec:
   type: ClusterIP
   selector:

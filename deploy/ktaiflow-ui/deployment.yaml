@@ -3,15 +3,21 @@ kind: Deployment
 metadata:
   name: ktaiflow-ui
   namespace: ${NAMESPACE}
+  labels:
+    app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+    app.kubernetes.io/component: ktaiflow-ui
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: ktaiflow-ui
+      app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
   template:
     metadata:
       labels:
         app: ktaiflow-ui
+        app.kubernetes.io/name: "${APP_INSTANCE_NAME}"
+        app.kubernetes.io/component: ktaiflow-ui
     spec:
       containers:
         - name: ktaiflow-ui

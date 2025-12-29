@@ -2,7 +2,7 @@ x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
 
-  publishedVersion: "2.0"
+  publishedVersion: "2.1.0"
   publishedVersionMetadata:
     releaseNote: >-
       Initial release of ElexRatio on GKE via manifest deployer.
@@ -87,9 +87,11 @@ properties:
     type: string
     title: Service Account for deployer
     default: "deployer-sa"
+    description: "Service account used by the Marketplace deployer to create Kubernetes resources during installation."
     x-google-marketplace:
       type: SERVICE_ACCOUNT
       serviceAccount:
+        description: "Used by deployer to create Deployments, Services, RBAC resources, and ConfigMaps during installation."
         roles:
           - type: ClusterRole
             rulesType: CUSTOM
