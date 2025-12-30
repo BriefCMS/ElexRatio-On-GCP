@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: ${KAT_ADMIN_STUDIO_CERT_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  domains:
+    - admin.${DOMAIN}

@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: ${KTAIFLOW_UI_CERT_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  domains:
+    - aiflowui.${DOMAIN}

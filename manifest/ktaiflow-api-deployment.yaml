@@ -39,11 +39,11 @@ spec:
 
           readinessProbe:
             tcpSocket:
-             port: 8080
+             port: ${KTAIFLOW_API_PORT}
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-             port: 8080
+             port: ${KTAIFLOW_API_PORT}
             initialDelaySeconds: 60
             periodSeconds: 30

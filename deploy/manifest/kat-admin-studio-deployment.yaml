@@ -23,7 +23,7 @@ spec:
         - name: kat-admin-studio
           image: ${KAT_ADMIN_STUDIO_IMAGE}
           ports:
-            - containerPort: 80
+            - containerPort: ${KAT_ADMIN_STUDIO_PORT}
           env:
             - name: NODE_ENV
               value: ${NODE_ENV}

@@ -46,7 +46,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: 5001
+              port: "http"
             initialDelaySeconds: 15 # Increased slightly for .NET startup
             periodSeconds: 10
             timeoutSeconds: 5
@@ -54,7 +54,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 5001
+              port: "http"
             initialDelaySeconds: 45 # Increased to give app room to breathe
             periodSeconds: 30
             timeoutSeconds: 5

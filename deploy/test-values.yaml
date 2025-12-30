@@ -1,0 +1,18 @@
+APP_INSTANCE_NAME: elexratiogcptest1
+NAMESPACE: kat
+DOMAIN: test.example.com
+deployerServiceAccount: deployer-sa
+
+# Image properties
+deployerImageRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer
+deployerImageTag: 2.1.24
+katApiRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api
+katApiTag: 2.0.0
+ktaiflowApiRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api
+ktaiflowApiTag: 2.0.0
+katDynamicPortalRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal
+katDynamicPortalTag: 2.0.0
+katAdminStudioRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio
+katAdminStudioTag: 2.0.0
+ktaiflowUiRepo: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui
+ktaiflowUiTag: 2.0.0
