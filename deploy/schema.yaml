@@ -27,7 +27,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api
         kat.api.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.1.29"
     ktaiflow-api:
       properties:
         ktaiflow.api.image.repo:
@@ -35,7 +35,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api
         ktaiflow.api.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.1.29"
     kat-dynamic-portal:
       properties:
         kat.portal.image.repo:
@@ -43,7 +43,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal
         kat.portal.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.1.29"
     kat-admin-studio:
       properties:
         kat.studio.image.repo:
@@ -51,7 +51,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio
         kat.studio.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.1.29"
     ktaiflow-ui:
       properties:
         ktaiflow.ui.image.repo:
@@ -59,7 +59,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui
         ktaiflow.ui.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.1.29"
 
 properties:
   APP_INSTANCE_NAME:
