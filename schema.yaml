@@ -19,7 +19,8 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer
         deployer.image.tag:
           type: TAG
-          default: "2.1.29"
+          default: "2.1.29-amd64"
+
     kat-api:
       properties:
         kat.api.image.repo:
@@ -27,7 +28,8 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api
         kat.api.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.0.0-amd64"
+
     ktaiflow-api:
       properties:
         ktaiflow.api.image.repo:
@@ -35,7 +37,8 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api
         ktaiflow.api.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.0.0-amd64"
+
     kat-dynamic-portal:
       properties:
         kat.portal.image.repo:
@@ -43,7 +46,8 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal
         kat.portal.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.0.0-amd64"
+
     kat-admin-studio:
       properties:
         kat.studio.image.repo:
@@ -51,7 +55,8 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio
         kat.studio.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.0.0-amd64"
+
     ktaiflow-ui:
       properties:
         ktaiflow.ui.image.repo:
@@ -59,7 +64,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui
         ktaiflow.ui.image.tag:
           type: TAG
-          default: "2.0.0"
+          default: "2.0.0-amd64"
 
 properties:
   APP_INSTANCE_NAME:
@@ -78,7 +83,7 @@ properties:
   DOMAIN:
     type: string
     pattern: "^[a-zA-Z0-9.-]+$"
-    default: "elexratio.example.com" 
+    default: "elexratio.example.com"
 
   deployerServiceAccount:
     type: string
@@ -110,52 +115,52 @@ properties:
     title: Deployer Image Repository
   deployerImageTag:
     type: string
-    default: "2.1.29"
+    default: "2.1.29-amd64"
     title: Deployer Image Tag
-  
+
   katApiRepo:
     type: string
     default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api"
     title: KAT API Image Repository
   katApiTag:
     type: string
-    default: "2.0.0"
+    default: "2.0.0-amd64"
     title: KAT API Image Tag
-  
+
   ktaiflowApiRepo:
     type: string
     default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api"
     title: KTAIFlow API Image Repository
   ktaiflowApiTag:
     type: string
-    default: "2.0.0"
+    default: "2.0.0-amd64"
     title: KTAIFlow API Image Tag
-  
+
   katDynamicPortalRepo:
     type: string
     default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal"
     title: KAT Dynamic Portal Image Repository
   katDynamicPortalTag:
     type: string
-    default: "2.0.0"
+    default: "2.0.0-amd64"
     title: KAT Dynamic Portal Image Tag
-  
+
   katAdminStudioRepo:
     type: string
     default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio"
     title: KAT Admin Studio Image Repository
   katAdminStudioTag:
     type: string
-    default: "2.0.0"
+    default: "2.0.0-amd64"
     title: KAT Admin Studio Image Tag
-  
+
   ktaiflowUiRepo:
     type: string
     default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui"
     title: KTAIFlow UI Image Repository
   ktaiflowUiTag:
     type: string
-    default: "2.0.0"
+    default: "2.0.0-amd64"
     title: KTAIFlow UI Image Tag
 
 required:
