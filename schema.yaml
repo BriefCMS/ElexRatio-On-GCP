@@ -2,10 +2,11 @@ x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
 
-  publishedVersion: "2.0.0"
+  publishedVersion: "2.3.0"
   publishedVersionMetadata:
     releaseNote: >
-      Initial release of ElexRatio on GKE via manifest deployer.
+      ElexRatio v2.3.0 - All images updated with Docker manifest v2 schema and Marketplace annotations.
+      Includes all components: kat-api, ktaiflow-api, kat-admin-studio, kat-dynamic-portal, and ktaiflow-ui.
     recommended: true
 
   managedUpdates:
@@ -19,7 +20,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer
         deployer.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
     kat-api:
       properties:
@@ -28,7 +29,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api
         kat.api.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
     ktaiflow-api:
       properties:
@@ -37,7 +38,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api
         ktaiflow.api.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
     kat-dynamic-portal:
       properties:
@@ -46,7 +47,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal
         kat.portal.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
     kat-admin-studio:
       properties:
@@ -55,7 +56,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio
         kat.studio.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
     ktaiflow-ui:
       properties:
@@ -64,7 +65,7 @@ x-google-marketplace:
           default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui
         ktaiflow.ui.image.tag:
           type: TAG
-          default: "2.2.0-amd64"
+          default: "2.3.0-amd64"
 
 properties:
   APP_INSTANCE_NAME:
