@@ -2,64 +2,26 @@ x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
 
-  publishedVersion: "2.2.0"
+  publishedVersion: "2.3.0"
   publishedVersionMetadata:
     releaseNote: >
-      Initial release of ElexRatio on GKE via manifest deployer.
+      ElexRatio v2.3.0 - All images updated with Docker manifest v2 schema and Marketplace annotations.
+      Includes all components: kat-api, ktaiflow-api, kat-admin-studio, kat-dynamic-portal, and ktaiflow-ui.
+      Fixed: Added reportingSecret for usage-based billing, expanded RBAC permissions, and corrected image paths to Marketplace standard (under deployer/).
     recommended: true
 
   managedUpdates:
     kalmSupported: false
 
   images:
-    deployer:
+    '':
       properties:
-        deployer.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer
-        deployer.image.tag:
+        image.registry:
+          type: REGISTRY
+        image.repository:
+          type: REPO_WITHOUT_REGISTRY
+        image.tag:
           type: TAG
-          default: "2.1.29"
-    kat-api:
-      properties:
-        kat.api.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api
-        kat.api.image.tag:
-          type: TAG
-          default: "2.1.29"
-    ktaiflow-api:
-      properties:
-        ktaiflow.api.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api
-        ktaiflow.api.image.tag:
-          type: TAG
-          default: "2.1.29"
-    kat-dynamic-portal:
-      properties:
-        kat.portal.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal
-        kat.portal.image.tag:
-          type: TAG
-          default: "2.1.29"
-    kat-admin-studio:
-      properties:
-        kat.studio.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio
-        kat.studio.image.tag:
-          type: TAG
-          default: "2.1.29"
-    ktaiflow-ui:
-      properties:
-        ktaiflow.ui.image.repo:
-          type: REPO_WITH_REGISTRY
-          default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui
-        ktaiflow.ui.image.tag:
-          type: TAG
-          default: "2.1.29"
 
 properties:
   APP_INSTANCE_NAME:
@@ -78,7 +40,40 @@ properties:
   DOMAIN:
     type: string
     pattern: "^[a-zA-Z0-9.-]+$"
-    default: "elexratio.example.com" 
+    default: "elexratio.example.com"
+
+  # CRITICAL FIX #1: Added reportingSecret for usage-based billing
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  # Image configurations - ALL under deployer/ path (Marketplace standard)
+  deployer.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer:2.3.0-amd64
+    x-google-marketplace:
+      type: DEPLOYER_IMAGE
+
+  katApi.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer/kat-api:2.3.0-amd64
+
+  ktaiflowApi.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer/ktaiflow-api:2.3.0-amd64
+
+  katDynamicPortal.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer/kat-dynamic-portal:2.3.0-amd64
+
+  katAdminStudio.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer/kat-admin-studio:2.3.0-amd64
+
+  ktaiflowUi.image:
+    type: string
+    default: us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer/ktaiflow-ui:2.3.0-amd64
 
   deployerServiceAccount:
     type: string
@@ -88,78 +83,41 @@ properties:
     x-google-marketplace:
       type: SERVICE_ACCOUNT
       serviceAccount:
-        description: "Used by deployer to create Deployments, Services, RBAC resources, and ConfigMaps during installation."
+        description: "Used by deployer to create, update, patch, delete Deployments, Services, RBAC resources, and ConfigMaps during installation and cleanup."
         roles:
+          # CRITICAL FIX #2: Expanded RBAC permissions with patch, delete, and additional API groups
           - type: ClusterRole
             rulesType: CUSTOM
             rules:
+              # Core resources - expanded permissions
               - apiGroups: [""]
-                resources: ["pods","services","serviceaccounts","configmaps"]
-                verbs: ["get","list","create","watch"]
+                resources: ["pods", "services", "serviceaccounts", "configmaps", "secrets", "persistentvolumeclaims", "events"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              # Apps resources - full CRUD permissions
               - apiGroups: ["apps"]
-                resources: ["deployments","statefulsets","replicasets"]
-                verbs: ["get","list","create","update","patch"]
+                resources: ["deployments", "statefulsets", "replicasets", "daemonsets"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              # RBAC resources - full permissions for setup and cleanup
               - apiGroups: ["rbac.authorization.k8s.io"]
-                resources: ["roles","rolebindings","clusterroles","clusterrolebindings"]
-                verbs: ["create","get","list"]
+                resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              # Application CRD resources (required by Marketplace)
+              - apiGroups: ["app.k8s.io"]
+                resources: ["applications"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+              # Networking resources (if using Ingress)
+              - apiGroups: ["networking.k8s.io"]
+                resources: ["ingresses", "networkpolicies"]
+                verbs: ["get", "list", "create", "update", "patch", "delete"]
+              # Batch jobs (for deployer job itself)
+              - apiGroups: ["batch"]
+                resources: ["jobs"]
+                verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
 
-  # Image properties as regular strings
-  deployerImageRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/deployer"
-    title: Deployer Image Repository
-  deployerImageTag:
-    type: string
-    default: "2.1.29"
-    title: Deployer Image Tag
-  
-  katApiRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-api"
-    title: KAT API Image Repository
-  katApiTag:
-    type: string
-    default: "2.0.0"
-    title: KAT API Image Tag
-  
-  ktaiflowApiRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-api"
-    title: KTAIFlow API Image Repository
-  ktaiflowApiTag:
-    type: string
-    default: "2.0.0"
-    title: KTAIFlow API Image Tag
-  
-  katDynamicPortalRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-dynamic-portal"
-    title: KAT Dynamic Portal Image Repository
-  katDynamicPortalTag:
-    type: string
-    default: "2.0.0"
-    title: KAT Dynamic Portal Image Tag
-  
-  katAdminStudioRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/kat-admin-studio"
-    title: KAT Admin Studio Image Repository
-  katAdminStudioTag:
-    type: string
-    default: "2.0.0"
-    title: KAT Admin Studio Image Tag
-  
-  ktaiflowUiRepo:
-    type: string
-    default: "us-docker.pkg.dev/able-decorator-477323-u6/gcr.io/elexratio/ktaiflow-ui"
-    title: KTAIFlow UI Image Repository
-  ktaiflowUiTag:
-    type: string
-    default: "2.0.0"
-    title: KTAIFlow UI Image Tag
-
+# CRITICAL FIX #1: Added reportingSecret to required fields
 required:
   - APP_INSTANCE_NAME
   - NAMESPACE
   - DOMAIN
+  - reportingSecret
   - deployerServiceAccount
