@@ -284,3 +284,14 @@ gcloud sql instances list
 
 # List storage buckets
 gsutil ls
+
+
+Support
+GitHub: https://github.com/BriefCMS/ElexRatio-On-GCP
+
+Email: support@elexratio.com
+
+Document Version: 1.0 | Last Updated: February 2026
+© 2026 ElexRatio. All rights reserved.
+
+
