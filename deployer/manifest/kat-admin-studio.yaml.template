@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $name-kat-admin-studio
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+    app.kubernetes.io/component: kat-admin-studio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kat-admin-studio
+      app.kubernetes.io/name: "$name"
+  template:
+    metadata:
+      labels:
+        app: kat-admin-studio
+        app.kubernetes.io/name: "$name"
+        app.kubernetes.io/component: kat-admin-studio
+    spec:
+      containers:
+        - name: kat-admin-studio
+          image: $katStudioImage
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $name-kat-admin-studio-svc
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: kat-admin-studio
+    app.kubernetes.io/name: "$name"

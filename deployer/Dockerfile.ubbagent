@@ -1,0 +1,18 @@
+FROM golang:1.22-alpine AS build
+
+COPY . /ubbagent-src/
+WORKDIR /ubbagent-src/
+
+RUN apk add --no-cache make git
+RUN git clone https://github.com/GoogleCloudPlatform/ubbagent.git .
+RUN make clean setup build
+
+FROM alpine:3.22
+RUN apk add --update libintl ca-certificates && \
+    apk add --virtual build_deps gettext && \
+    cp /usr/bin/envsubst /usr/local/bin/envsubst && \
+    apk del build_deps && \
+    rm -rf /var/cache/apk/*
+
+COPY --from=build /ubbagent-src/bin/ubbagent /usr/local/bin/ubbagent
+CMD ["/usr/local/bin/ubbagent"]

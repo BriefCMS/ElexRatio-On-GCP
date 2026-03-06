@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $name-ktaiflow-api
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+    app.kubernetes.io/component: ktaiflow-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ktaiflow-api
+      app.kubernetes.io/name: "$name"
+  template:
+    metadata:
+      labels:
+        app: ktaiflow-api
+        app.kubernetes.io/name: "$name"
+        app.kubernetes.io/component: ktaiflow-api
+    spec:
+      containers:
+        - name: ktaiflow-api
+          image: $ktaiflowApiImage
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://*:5002"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $name-ktaiflow-api-svc
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5002
+      targetPort: 5002
+  selector:
+    app: ktaiflow-api
+    app.kubernetes.io/name: "$name"
