@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $name-kat-api
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+    app.kubernetes.io/component: kat-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kat-api
+      app.kubernetes.io/name: "$name"
+  template:
+    metadata:
+      labels:
+        app: kat-api
+        app.kubernetes.io/name: "$name"
+        app.kubernetes.io/component: kat-api
+    spec:
+      containers:
+        - name: kat-api
+          image: $katApiImage
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://*:5001"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $name-kat-api-svc
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5001
+      targetPort: 5001
+  selector:
+    app: kat-api
+    app.kubernetes.io/name: "$name"

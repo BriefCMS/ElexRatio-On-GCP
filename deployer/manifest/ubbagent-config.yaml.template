@@ -1,0 +1,64 @@
+---
+# Usage-Based Billing Agent Configuration
+# ConfigMap for the Google Cloud Marketplace metering agent
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: $name-ubbagent-config
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+    app.kubernetes.io/component: ubbagent-config
+data:
+  config.yaml: |
+    # Identity section - authentication with Google Service Control
+    identities:
+      - name: gcp
+        gcp:
+          encodedServiceAccountKey: $AGENT_ENCODED_KEY
+
+    # Metrics section - define metrics to be reported
+    metrics:
+      # Instance time metric - tracks how long the application runs
+      - name: instance_time
+        type: int
+        aggregation:
+          bufferSeconds: 60
+        endpoints:
+          - name: disk
+          - name: servicecontrol
+
+      # API requests metric - tracks API usage
+      - name: requests
+        type: int
+        aggregation:
+          bufferSeconds: 60
+        endpoints:
+          - name: disk
+          - name: servicecontrol
+
+    # Endpoints section - where usage reports are sent
+    endpoints:
+      # Local disk for crash recovery
+      - name: disk
+        disk:
+          reportDir: $AGENT_REPORT_DIR
+          expireSeconds: 3600
+
+      # Google Service Control endpoint
+      - name: servicecontrol
+        servicecontrol:
+          identity: gcp
+          # Service name format: briefcms.endpoints.PROJECT_ID.cloud.goog
+          serviceName: briefcms.endpoints.able-decorator-477323-u6.cloud.goog
+          consumerId: $AGENT_CONSUMER_ID
+
+    # Sources section - automatic heartbeat for instance_time
+    sources:
+      - name: instance_time_heartbeat
+        heartbeat:
+          metric: instance_time
+          # Report every 60 seconds
+          intervalSeconds: 60
+          value:
+            int64Value: 60

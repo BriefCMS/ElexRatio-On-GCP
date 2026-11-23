@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $name-kat-dynamic-portal
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+    app.kubernetes.io/component: kat-dynamic-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kat-dynamic-portal
+      app.kubernetes.io/name: "$name"
+  template:
+    metadata:
+      labels:
+        app: kat-dynamic-portal
+        app.kubernetes.io/name: "$name"
+        app.kubernetes.io/component: kat-dynamic-portal
+    spec:
+      containers:
+        - name: kat-dynamic-portal
+          image: $katPortalImage
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $name-kat-dynamic-portal-svc
+  namespace: $namespace
+  labels:
+    app.kubernetes.io/name: "$name"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: kat-dynamic-portal
+    app.kubernetes.io/name: "$name"

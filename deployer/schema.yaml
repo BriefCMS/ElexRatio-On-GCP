@@ -1,0 +1,103 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+
+  publishedVersion: "9.1.0"
+  publishedVersionMetadata:
+    releaseNote: >-
+      ElexRatio v9.1.0 - Production release with all components and billing integration.
+    recommended: true
+
+  # Kubernetes version constraint - exclude 1.33+ due to compatibility
+  clusterConstraints:
+    k8sVersion: ">=1.29.0"
+
+  images:
+    deployer:
+      properties:
+        deployerImage:
+          type: FULL
+    kat-api:
+      properties:
+        katApiImage:
+          type: FULL
+    ktaiflow-api:
+      properties:
+        ktaiflowApiImage:
+          type: FULL
+    kat-dynamic-portal:
+      properties:
+        katPortalImage:
+          type: FULL
+    kat-admin-studio:
+      properties:
+        katStudioImage:
+          type: FULL
+    ktaiflow-ui:
+      properties:
+        ktaiflowUiImage:
+          type: FULL
+    # Use official Marketplace metering image (required for CVE compliance).
+    # When submitting container images in Partner Portal, use: gcr.io/cloud-marketplace-tools/metering/ubbagent
+    ubbagent:
+      properties:
+        ubbagentImage:
+          type: FULL
+          default: gcr.io/able-decorator-477323-u6/elexratio/ubbagent:9.1.0
+
+  deployerServiceAccount:
+    description: "Service account for deploying ElexRatio resources"
+    roles:
+      - type: ClusterRole
+        rulesType: CUSTOM
+        rules:
+          - apiGroups: [""]
+            resources: ["pods", "services", "serviceaccounts", "configmaps", "secrets", "persistentvolumeclaims", "events", "namespaces"]
+            verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+          - apiGroups: ["apps"]
+            resources: ["deployments", "statefulsets", "replicasets", "daemonsets"]
+            verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+          - apiGroups: ["rbac.authorization.k8s.io"]
+            resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+            verbs: ["get", "list", "create", "update", "patch", "delete", "watch", "bind", "escalate"]
+          - apiGroups: ["app.k8s.io"]
+            resources: ["applications"]
+            verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+          - apiGroups: ["networking.k8s.io"]
+            resources: ["ingresses", "networkpolicies"]
+            verbs: ["get", "list", "create", "update", "patch", "delete"]
+          - apiGroups: ["batch"]
+            resources: ["jobs"]
+            verbs: ["get", "list", "create", "update", "patch", "delete", "watch"]
+
+properties:
+  name:
+    type: string
+    title: Application Instance Name
+    description: Unique name for this ElexRatio deployment
+    default: elexratio
+    x-google-marketplace:
+      type: NAME
+
+  namespace:
+    type: string
+    title: Kubernetes Namespace
+    description: Namespace where ElexRatio will be deployed
+    x-google-marketplace:
+      type: NAMESPACE
+
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+  domain:
+    type: string
+    title: Application Domain
+    description: Domain name for accessing ElexRatio
+    default: elexratio.example.com
+
+required:
+  - name
+  - namespace
+  - reportingSecret
