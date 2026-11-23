@@ -2,10 +2,10 @@ x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
 
-  publishedVersion: "8.0.0"
+  publishedVersion: "9.1.0"
   publishedVersionMetadata:
     releaseNote: >-
-      ElexRatio v8.0.0 - Production release with all components and billing integration.
+      ElexRatio v9.1.0 - Production release with all components and billing integration.
     recommended: true
 
   # Kubernetes version constraint - exclude 1.33+ due to compatibility
@@ -43,7 +43,7 @@ x-google-marketplace:
       properties:
         ubbagentImage:
           type: FULL
-          default: gcr.io/able-decorator-477323-u6/elexratio/ubbagent:8.0.0
+          default: gcr.io/able-decorator-477323-u6/elexratio/ubbagent:9.1.0
 
   deployerServiceAccount:
     description: "Service account for deploying ElexRatio resources"
